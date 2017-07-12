@@ -66,7 +66,7 @@ public class HUDLerp : MonoBehaviour {
 			m_toMin = false;
 			m_hidden = false;
 		}
-		m_countdownToHide = 3.0f;
+		m_countdownToHide = 1.0f;
 	}
 
 }
