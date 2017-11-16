@@ -55,7 +55,8 @@ public class HUDLerp : MonoBehaviour {
 		}
 	}
 
-	public void LookedAt(){
+	public void LookedAt()
+	{
 		if (!m_atMax) 
 		{
 			if (m_toMin) 

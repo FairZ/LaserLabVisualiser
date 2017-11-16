@@ -1,0 +1,51 @@
+Initialize engine version: 5.3.5f1 (960ebf59018a)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA GeForce GTX 560 Ti (ID=0x1200)
+    Vendor:   NVIDIA
+    VRAM:     973 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\InTheHand.Net.Personal.dll (this message is harmless)
+Loading C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\InTheHand.Net.Personal.dll into Unity Child Domain
+Platform assembly: C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\MqttLib.dll (this message is harmless)
+Loading C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\MqttLib.dll into Unity Child Domain
+- Completed reload, in  0.058 seconds
+Platform assembly: C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\System.dll (this message is harmless)
+<RI> Initializing input.
+<RI> Input initialized.
+desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
+<RI> Initialized touch support.
+UnloadTime: 0.651263 ms
+Platform assembly: C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\System.Configuration.dll (this message is harmless)
+Platform assembly: C:\Users\adam\Documents\LaserLabVisualiser\LaserLabVisualiser\Builds\Demo_Data\Managed\System.Xml.dll (this message is harmless)
+SocketException: No connection could be made because the target machine actively refused it.
+
+  at System.Net.Sockets.Socket.Connect (System.Net.EndPoint remoteEP, Boolean requireSocketPolicy) [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.Socket.Connect (System.Net.EndPoint remoteEP) [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.TcpClient.Connect (System.Net.IPEndPoint remote_end_point) [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.TcpClient.Connect (System.Net.IPAddress[] ipAddresses, Int32 port) [0x00000] in <filename unknown>:0 
+Rethrow as MqttBrokerUnavailableException: Unable to connect to the broker
+  at MqttLib.Mqtt.DoConnect (MqttLib.Core.Messages.MqttConnectMessage conmsg) [0x00000] in <filename unknown>:0 
+  at MqttLib.Mqtt.Connect (Boolean cleanStart) [0x00000] in <filename unknown>:0 
+  at mqttBroker.Awake () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+Installation path could not be located (110)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Setting up 1 worker threads for Enlighten.
+  Thread -> id: 11a8 -> priority: 1 

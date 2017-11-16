@@ -15,7 +15,7 @@ public class mqttBroker : MonoBehaviour {
 	//Awake function connects to the mqtt broker and sets a function to be called whenever a publish arrives
 	//NOTE: a factory class may be used to allow connections to any mqtt broker not just a hard coded one
 	void Awake () {
-		m_client = MqttClientFactory.CreateClient ("tcp://127.0.0.1:1883", "UnityProxy");
+		m_client = MqttClientFactory.CreateClient ("tcp://192.168.0.50:1883", "UnityProxy");
 		m_client.Connect(true);
 		m_client.PublishArrived += new PublishArrivedDelegate(MessageRecieved);
 	}
