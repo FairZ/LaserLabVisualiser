@@ -46,3 +46,5 @@ C:\Users\ian\Desktop\RnD\LaserLabVisualiser\LaserLabVisualiser\Temp\bin\Debug\Un
 C:\Users\ian\Desktop\RnD\LaserLabVisualiser\LaserLabVisualiser\Temp\bin\Debug\UnityEngine.UI.xml
 C:\Users\ian\Desktop\RnD\LaserLabVisualiser\LaserLabVisualiser\Temp\bin\Debug\UnityEngine.Networking.xml
 C:\Users\ian\Desktop\RnD\LaserLabVisualiser\LaserLabVisualiser\obj\Debug\Assembly-CSharp.pdb
+C:\Users\ian\Documents\GitHub\LaserLabVisualiser\LaserLabVisualiser\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
+C:\Users\ian\Documents\GitHub\LaserLabVisualiser\LaserLabVisualiser\obj\Debug\Assembly-CSharp.dll

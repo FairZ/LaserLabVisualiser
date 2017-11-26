@@ -32,6 +32,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// </summary>
         private System.DateTimeOffset timer;
         /// <summary>
+        /// Time in seconds between data pushes
+        /// </summary>
+        private const float timestep = 0.05f;
+        /// <summary>
         /// Radius of drawn hand circles
         /// </summary>
         private const double HandSize = 30;
@@ -279,7 +283,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             m_client = MqttClientFactory.CreateClient("tcp://192.168.0.50:1883", "MQTTKinect");
             m_client.Connect(cleanStart: true);
             m_client.Publish("text", "Kinect 2.0 just loaded!", QoS.BestEfforts, false);
-            timer = System.DateTimeOffset.Now.AddSeconds(1);
+            timer = System.DateTimeOffset.Now.AddSeconds(0.1f);
 
             if (this.bodyFrameReader != null)
             {
@@ -401,12 +405,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             {
                 return;
             }
-            timer = System.DateTimeOffset.Now.AddSeconds(1);
+            timer = System.DateTimeOffset.Now.AddSeconds(timestep);
 
             //string topicBase = "kinect/";
             //topicBase += skeleton.TrackingId.ToString() + "/";
 
-            foreach(var joint in joints.Values)
+            string payLoad = "";
+
+            foreach (var joint in joints.Values)
             {
                 //Don't send any data if not tracked, could send only joint number in future
                 if (joint.TrackingState == TrackingState.NotTracked)
@@ -416,18 +422,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 int jointVal = (int)joint.JointType;
 
 
-                string payLoad = jointVal.ToString("D2") +
+                payLoad += jointVal.ToString("D2") + ";" +
                                  joint.Position.X.ToString("N3") + ";" +
                                  joint.Position.Y.ToString("N3") + ";" +
-                                 joint.Position.Z.ToString("N3");
+                                 joint.Position.Z.ToString("N3") + "/";
               
-                m_client.Publish("kinect", 
+                
+            }
+            m_client.Publish("kinect",
                                 payLoad,
                                 QoS.BestEfforts,
                                 false);
 
-            }
-            
             // Draw the joints
             foreach (JointType jointType in joints.Keys)
             {

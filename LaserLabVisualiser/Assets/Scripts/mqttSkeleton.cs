@@ -38,18 +38,18 @@ public class mqttSkeleton : mqttClient
 
 	void positionJoint()
 	{
-		int currJoint = Int32.Parse(m_data.Substring (0, 2));
+		String[] joints = m_data.Split ('/');
+		foreach (string s in joints) {
+			String[] coords = s.Split(';');
+			int currJoint = Int32.Parse (coords [0]);
+			float x = float.Parse (coords [1]);
+			float y = float.Parse (coords [2]);
+			float z = float.Parse (coords [3]);
+			Debug.Log ((JointType)Int32.Parse (coords [0]));
 
-		String[] coords = m_data.Substring (2).Split (';');
-		float x = float.Parse(coords [0]);
-		float y = float.Parse(coords [1]);
-		float z = float.Parse(coords [2]);
-
-		foreach (var s in coords) {
-			Debug.Log (s);
+			transform.GetChild(currJoint).position = new Vector3(x,y,z)*10;
 		}
 
-		transform.GetChild(currJoint).position = new Vector3(x,y,z)*10;
 	}
 
 	// Update is called once per frame
