@@ -34,23 +34,51 @@ public class mqttSkeleton : mqttClient
 		HandTipRight  = 23,
 		ThumbRight    = 24
 	}	 
-	public Dictionary<JointType, Vector3> jointPositions;
+
+	private GameObject activeSkeleton;
+
+
+	void createSkeleton()
+	{
+		GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
+		sphere.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
+		GameObject parent = new GameObject("Skeleton");
+		//24 is length of joint types
+		for (uint i = 0; i <= 24; i++) {
+			GameObject tmpGO = Instantiate (sphere);
+			JointType jt = (JointType)i;
+			tmpGO.name = jt.ToString ();
+			tmpGO.transform.SetParent (parent.transform);
+		}
+		activeSkeleton = parent;
+		Destroy (sphere);
+	}
+
 
 	void positionJoint()
 	{
 		String[] joints = m_data.Split ('/');
 		foreach (string s in joints) {
+			if (s.Length == 0)
+				continue;
 			String[] coords = s.Split(';');
 			int currJoint = Int32.Parse (coords [0]);
 			float x = float.Parse (coords [1]);
 			float y = float.Parse (coords [2]);
 			float z = float.Parse (coords [3]);
-			Debug.Log ((JointType)Int32.Parse (coords [0]));
+			//Debug.Log ("Joint: " + (JointType)Int32.Parse (coords [0]));
 
-			transform.GetChild(currJoint).position = new Vector3(x,y,z)*10;
+			activeSkeleton.transform.GetChild(currJoint).position = new Vector3(x,y,z)*10;
 		}
 
 	}
+
+
+	void Awake()
+	{
+		createSkeleton ();
+	}
+
 
 	// Update is called once per frame
 	void Update () 
