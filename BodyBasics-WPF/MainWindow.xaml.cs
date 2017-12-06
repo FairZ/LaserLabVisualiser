@@ -33,6 +33,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private System.DateTimeOffset timer;
         /// <summary>
         /// Time in seconds between data pushes
+        /// 
         /// </summary>
         private const float timestep = 0.05f;
         /// <summary>
@@ -420,14 +421,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
                 int jointVal = (int)joint.JointType;
+                int trackState = (int)joint.TrackingState;
+
+                payLoad +=  jointVal.ToString("D2") + ";" +
+                            joint.Position.X.ToString("N3") + ";" +
+                            joint.Position.Y.ToString("N3") + ";" +
+                            joint.Position.Z.ToString("N3") + ";" +
+                            trackState.ToString("D1") + "/";
 
 
-                payLoad += jointVal.ToString("D2") + ";" +
-                                 joint.Position.X.ToString("N3") + ";" +
-                                 joint.Position.Y.ToString("N3") + ";" +
-                                 joint.Position.Z.ToString("N3") + "/";
-              
-                
+
             }
             m_client.Publish("kinect",
                                 payLoad,

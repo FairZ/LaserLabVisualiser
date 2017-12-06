@@ -1,0 +1,35 @@
+#
+# Creating new log
+#
+29/11/2017 - 12:52:32 - [ERROR]System.IO.IOException: Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host. ---> System.Net.Sockets.SocketException: An existing connection was forcibly closed by the remote host
+   at System.Net.Sockets.Socket.Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags)
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.Stream.ReadByte()
+   at MqttLib.Core.Messages.MqttMessage.DecodeVariableHeaderLength(Stream str)
+   at MqttLib.Core.Messages.MqttMessage..ctor(Stream str, Byte header)
+   at MqttLib.Core.Messages.MessageFactory.CreateMessage(Stream str, Byte header)
+   at MqttLib.Core.StreamManager.listen(IAsyncResult asyncResult)
+#
+# Creating new log
+#
+29/11/2017 - 12:54:00 - [ERROR]System.IO.IOException: Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host. ---> System.Net.Sockets.SocketException: An existing connection was forcibly closed by the remote host
+   at System.Net.Sockets.Socket.Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags)
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.IO.Stream.ReadByte()
+   at MqttLib.Core.Messages.MqttMessage.DecodeVariableHeaderLength(Stream str)
+   at MqttLib.Core.Messages.MqttMessage..ctor(Stream str, Byte header)
+   at MqttLib.Core.Messages.MessageFactory.CreateMessage(Stream str, Byte header)
+   at MqttLib.Core.StreamManager.listen(IAsyncResult asyncResult)
+#
+# Creating new log
+#
+29/11/2017 - 13:12:41 - [ERROR]System.IO.IOException: Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host. ---> System.Net.Sockets.SocketException: An existing connection was forcibly closed by the remote host
+   at System.Net.Sockets.Socket.EndReceive(IAsyncResult asyncResult)
+   at System.Net.Sockets.NetworkStream.EndRead(IAsyncResult asyncResult)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.EndRead(IAsyncResult asyncResult)
+   at MqttLib.Core.StreamManager.listen(IAsyncResult asyncResult)
