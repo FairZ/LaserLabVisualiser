@@ -10,3 +10,15 @@
   --- End of inner exception stack trace ---
   at System.Net.Sockets.NetworkStream.EndRead (IAsyncResult ar) [0x00000] in <filename unknown>:0 
   at MqttLib.Core.StreamManager.listen (IAsyncResult asyncResult) [0x00000] in <filename unknown>:0 
+#
+# Creating new log
+#
+12/6/2017 - 1:08:15 PM - [ERROR]System.IO.IOException: EndRead failure ---> System.Net.Sockets.SocketException: An established connection was aborted by the software in your host machine.
+
+  at System.Net.Sockets.Socket+SocketAsyncResult.CheckIfThrowDelayedException () [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.Socket.EndReceive (IAsyncResult asyncResult, System.Net.Sockets.SocketError& errorCode) [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.Socket.EndReceive (IAsyncResult result) [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.NetworkStream.EndRead (IAsyncResult ar) [0x00000] in <filename unknown>:0 
+  --- End of inner exception stack trace ---
+  at System.Net.Sockets.NetworkStream.EndRead (IAsyncResult ar) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.StreamManager.listen (IAsyncResult asyncResult) [0x00000] in <filename unknown>:0 

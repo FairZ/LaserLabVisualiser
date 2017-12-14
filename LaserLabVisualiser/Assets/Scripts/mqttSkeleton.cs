@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 public class mqttSkeleton : mqttClient 
 {
@@ -9,6 +10,13 @@ public class mqttSkeleton : mqttClient
 	public Material red;
 	public Material green;
 	public Material blue;
+
+	public Avatar skeleton;
+
+	public bool offline = false;
+	public string filePath = "";
+	String[] localData;
+	int lineCount;
 
 	///The types of joints of a Body.
 	public enum JointType
@@ -56,7 +64,7 @@ public class mqttSkeleton : mqttClient
 	private GameObject activeSkeleton;
 
 
-	void createSkeleton()
+	void createBallSkeleton()
 	{
 		//Create a sphere to use as a template
 		GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
@@ -80,6 +88,12 @@ public class mqttSkeleton : mqttClient
 		activeSkeleton = parent;
 	}
 
+	void createSkeleton()
+	{
+		GameObject go = new GameObject();
+		AvatarBuilder.BuildGenericAvatar(go, "");
+
+	}
 
 	void updateJoints()
 	{
@@ -90,7 +104,7 @@ public class mqttSkeleton : mqttClient
 
 		//Populate the dictionary by parsing the sent data
 		foreach (string s in jointData_str) {
-			if (s.Length == 0)
+			if (s.Length < 2)
 				continue;
 			
 			String[] coords = s.Split(';');
@@ -102,8 +116,6 @@ public class mqttSkeleton : mqttClient
 			float z = float.Parse (coords [3]);
 
 			int trackState = Int32.Parse (coords [4]);
-
-			Debug.Log (trackState);
 
 			skeleton_dict.Add (currJoint, new jointData (x, y, z, trackState));
 		}
@@ -130,11 +142,37 @@ public class mqttSkeleton : mqttClient
 		}
 
 	}
+	//Imperfect but functional, relatable function really...
+	IEnumerator fileText()
+	{
+		while (Application.isPlaying) {
+			m_data = localData [lineCount];
+			if (lineCount == localData.Length-1)
+				lineCount = 0;
+			lineCount++;
+			yield return new WaitForSeconds (0.05f);
+		}
+	}
 
+	void fromFile()
+	{
+		if (File.Exists (filePath)) {
+			string tmp_data = File.ReadAllText (filePath);
+			localData = tmp_data.Split ('*');
+			StartCoroutine (fileText ());
+		}
+		else
+		{
+			Debug.LogError ("File not found/accessible at: " + filePath);
+		}
+	}
 
 	void Awake()
 	{
-		createSkeleton ();
+		//createSkeleton ();
+		createBallSkeleton ();
+		if (offline)
+			fromFile ();
 	}
 
 
@@ -142,9 +180,6 @@ public class mqttSkeleton : mqttClient
 	void Update () 
 	{
 		if (m_data != "") 
-		{
-			
 			updateJoints();
-		}
 	}
 }

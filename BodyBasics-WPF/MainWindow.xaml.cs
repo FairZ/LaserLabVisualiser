@@ -432,6 +432,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
 
             }
+            payLoad += "*";
             m_client.Publish("kinect",
                                 payLoad,
                                 QoS.BestEfforts,
