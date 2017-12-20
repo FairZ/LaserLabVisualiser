@@ -10,10 +10,15 @@ public class mqttClient : MonoBehaviour {
 
 	protected string m_data = "";
 
+	public bool offline = false;
+
+	public string filePath = "";
+
 	protected void Start()
 	{
 		//m_broker = GameObject.FindGameObjectWithTag("Broker").GetComponent<mqttBroker>();
-		m_broker.SubscribeToTopic(m_topic, this);
+		if(!offline)
+			m_broker.SubscribeToTopic(m_topic, this);
 	}
 
 	public void TransferPayload(string _topic, string _payload)
