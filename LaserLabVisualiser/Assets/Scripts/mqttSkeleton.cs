@@ -23,7 +23,8 @@ public class mqttSkeleton : mqttClient
 		//Add line for drawing a stickman
 		sphere.AddComponent<LineRenderer>();
 		sphere.GetComponent<LineRenderer>().material = debugColours[3];
-
+		sphere.GetComponent<LineRenderer>().widthMultiplier = 0.2f;
+		sphere.GetComponent<LineRenderer>().receiveShadows = false;
 		//Create a gameobject to attach the joints to
 		GameObject parent = new GameObject("Skeleton");
 
@@ -80,10 +81,8 @@ public class mqttSkeleton : mqttClient
 			if(activeSkeleton.getSkeleDic().TryGetValue(i, out jd))
 			{
 				activeSkeleton.root.transform.GetChild(i).gameObject.GetComponent<LineRenderer>().SetPosition(0, activeSkeleton.root.transform.GetChild(i).position);
-				if(jd.parentID > 0)
+				if(jd.parentID >= 0)
 					activeSkeleton.root.transform.GetChild(i).gameObject.GetComponent<LineRenderer>().SetPosition(1, activeSkeleton.root.transform.GetChild(jd.parentID).position);
-				else
-					Debug.Log(i + " - " + jd.parentID);
 			}
 		}
 	}

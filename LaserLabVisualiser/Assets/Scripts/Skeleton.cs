@@ -3,6 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+/// <summary>
+/// Kalman filter code taken from
+/// https://github.com/asus4/UnityIMU
+/// </summary>
+using Kalman;
 
 public class Skeleton 
 {
@@ -13,7 +18,10 @@ public class Skeleton
 	public Material dm_green;
 	public Material dm_blue;
 
-	Dictionary<int, jointData> skeleton_dict;
+	List<IKalmanWrapper> kalman;
+
+	Dictionary<int, jointData> prev_skeleton_dict;
+	Dictionary<int, jointData> curr_skeleton_dict;
 
 	///The types of joints of a Body.
 	public enum JointType
@@ -111,12 +119,26 @@ public class Skeleton
 			dm_green = _debugMats[1];
 			dm_blue = _debugMats[2];
 		}
-		skeleton_dict = new Dictionary<int, jointData>();
+		curr_skeleton_dict = new Dictionary<int, jointData>();
+		prev_skeleton_dict = new Dictionary<int, jointData>();
+
+
+		kalman = new List<IKalmanWrapper>();
+		for(int i = 0; i <= 24; i++)
+		{
+			kalman.Add(new MatrixKalmanWrapper());
+		}
+	}
+
+	Vector3 LerpByDistance(Vector3 A, Vector3 B, float x)
+	{
+		Vector3 P = x * Vector3.Normalize(B - A) + A;
+		return P;
 	}
 
 	public void updateJoints(String _data)
 	{
-		skeleton_dict.Clear();
+		curr_skeleton_dict.Clear();
 
 		//Split the packet into the component 
 		String[] jointData_str = _data.Split ('/');
@@ -136,34 +158,61 @@ public class Skeleton
 
 			int trackState = Int32.Parse (coords [4]);
 
-			skeleton_dict.Add (currJoint, new jointData (x, y, z, trackState, getParentId(currJoint)));
+			curr_skeleton_dict.Add (currJoint, new jointData (x, y, z, trackState, getParentId(currJoint)));
 		}
 
 		//Update the joint positions if known, and colour them accordingly
-		for (int i = 0; i <= 24; i++) {
+		for (int i = 0; i <= 24; i++) 
+		{
 			//an empty joint data that we store our joint in if it exists
-			jointData jd;
+			jointData jd, jd_prev;
+
 			//If there is a dictionary entry for the joint, update its position
-			if (skeleton_dict.TryGetValue (i, out jd)) {
-				root.transform.GetChild (i).position = new Vector3 (jd.x, jd.y, jd.z)*10;
+			if (curr_skeleton_dict.TryGetValue (i, out jd) && prev_skeleton_dict.TryGetValue (i, out jd_prev)) 
+			{
+				Vector3 tracked_pos = new Vector3(jd.x, jd.y, jd.z);
+				Vector3 prev_pos = new Vector3(jd_prev.x, jd_prev.y, jd_prev.z);
+
+				Vector3 final = tracked_pos;
+
+				float dist_moved = Vector3.Distance(tracked_pos, prev_pos);
+						
+				
+
 				//If the position is known colour it blue
-				if (jd.trackState == 2)
-					root.transform.GetChild (i).gameObject.GetComponent<MeshRenderer> ().material = dm_blue;
+				if(jd.trackState == 2)
+				{
+					root.transform.GetChild(i).gameObject.GetComponent<MeshRenderer>().material = dm_blue;
+					final = kalman[i].Update(final);
+				}
+
+
+
+
+
+
+
 				//If the position is inferred colour it green
 				else if(jd.trackState == 1)
 					root.transform.GetChild (i).gameObject.GetComponent<MeshRenderer> ().material = dm_green;
 				else
 					root.transform.GetChild (i).gameObject.GetComponent<MeshRenderer> ().material = dm_red;
+
+
+
+				root.transform.GetChild (i).position = final*10;//Scaled up to see clearer
 			}
 			//If there is no entry colour it red
 			else
 				root.transform.GetChild (i).gameObject.GetComponent<MeshRenderer> ().material = dm_red;
 		}
 
+		prev_skeleton_dict = new Dictionary<int, jointData>(curr_skeleton_dict);
 	}
+
 	public Dictionary<int, jointData> getSkeleDic()
 	{
-		Dictionary<int, jointData> ret = new Dictionary<int, jointData>(skeleton_dict);
+		Dictionary<int, jointData> ret = new Dictionary<int, jointData>(curr_skeleton_dict);
 		return ret;
 	}
 }
