@@ -20,6 +20,8 @@ public class Skeleton
 
 	List<IKalmanWrapper> kalman;
 
+	uint avPrecision = 5;
+
 	Dictionary<int, jointData> prev_skeleton_dict;
 	Dictionary<int, jointData> curr_skeleton_dict;
 
@@ -55,6 +57,8 @@ public class Skeleton
 	public struct jointData
 	{
 		public float x, y, z;
+		public float distToParent;
+		public List<float> distToParentMeasurements;
 		public int trackState;
 		public int parentID;
 		public jointData(float _x, float _y, float _z, int _trackState, int _parentID)
@@ -62,6 +66,10 @@ public class Skeleton
 			x = _x;
 			y = _y;
 			z = _z;
+			distToParent = -1.0f;
+
+			distToParentMeasurements = new List<float>();
+
 			trackState = _trackState;
 			parentID = _parentID;
 		}
@@ -136,6 +144,27 @@ public class Skeleton
 		return P;
 	}
 
+	float replaceInAverage(List<float> _averages, float _currAverage, float _newValue)
+	{
+		float ret = _newValue;
+		if(_averages.Count > 0)
+			ret = (_averages.Count * _currAverage - _averages[0] + _newValue) / _averages.Count;
+		
+		_averages.Add(_newValue);
+
+		if(_averages.Count > avPrecision)
+			_averages.RemoveAt(0);
+		return ret;
+	}
+
+	void updateDistToParent(jointData _joint, jointData _parent)
+	{
+		Vector3 jointPos = new Vector3(_joint.x, _joint.y, _joint.z);
+		Vector3 parentPos = new Vector3(_parent.x, _parent.y, _parent.z);
+		float dist = Vector3.Distance(jointPos, parentPos);
+		_joint.distToParent = replaceInAverage(_joint.distToParentMeasurements, _joint.distToParent, dist);
+	}
+
 	public void updateJoints(String _data)
 	{
 		curr_skeleton_dict.Clear();
@@ -171,30 +200,45 @@ public class Skeleton
 			if (curr_skeleton_dict.TryGetValue (i, out jd) && prev_skeleton_dict.TryGetValue (i, out jd_prev)) 
 			{
 				Vector3 tracked_pos = new Vector3(jd.x, jd.y, jd.z);
-				Vector3 prev_pos = new Vector3(jd_prev.x, jd_prev.y, jd_prev.z);
+				//Vector3 prev_pos = new Vector3(jd_prev.x, jd_prev.y, jd_prev.z);
 
 				Vector3 final = tracked_pos;
 
-				float dist_moved = Vector3.Distance(tracked_pos, prev_pos);
-						
-				
+				//float dist_moved = Vector3.Distance(tracked_pos, prev_pos);
 
 				//If the position is known colour it blue
 				if(jd.trackState == 2)
 				{
 					root.transform.GetChild(i).gameObject.GetComponent<MeshRenderer>().material = dm_blue;
+
+					jointData parentJoint;
+					if (curr_skeleton_dict.TryGetValue (jd.parentID, out parentJoint))
+						updateDistToParent(jd, parentJoint);
+
 					final = kalman[i].Update(final);
+
 				}
-
-
-
-
-
-
-
 				//If the position is inferred colour it green
 				else if(jd.trackState == 1)
-					root.transform.GetChild (i).gameObject.GetComponent<MeshRenderer> ().material = dm_green;
+				{
+					root.transform.GetChild(i).gameObject.GetComponent<MeshRenderer>().material = dm_green;
+
+					jointData parentJoint, parentOfParentJoint;
+					if(curr_skeleton_dict.TryGetValue(jd.parentID, out parentJoint))
+					{
+						if(curr_skeleton_dict.TryGetValue(parentJoint.parentID, out parentOfParentJoint))
+						{
+							Ray r = new Ray();
+							r.origin = new Vector3(parentJoint.x, parentJoint.y, parentJoint.z);
+							Vector3 parentPos = new Vector3(parentJoint.x, parentJoint.y, parentJoint.z);
+							Vector3 parentOfParentPos = new Vector3(parentOfParentJoint.x, parentOfParentJoint.y, parentOfParentJoint.z);
+							r.direction =  parentOfParentPos - parentPos;
+							final = r.GetPoint(jd.distToParent);
+							Debug.Log(jd.distToParent);
+						}
+					}
+				}
+
 				else
 					root.transform.GetChild (i).gameObject.GetComponent<MeshRenderer> ().material = dm_red;
 
