@@ -45,7 +45,7 @@ public class mqttSkeleton : mqttClient
 		sphere.name = _jt.ToString ();
 		sphere.transform.SetParent (parent.transform);
 		//Set the active skeleton to be our parent
-		activeSkeleton = new Skeleton(parent, joints, debugColours);
+		activeSkeleton = new Skeleton(parent, debugColours);
 	}
 
 	//Imperfect but functional, relatable function really...

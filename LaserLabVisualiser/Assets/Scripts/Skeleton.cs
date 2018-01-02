@@ -66,7 +66,7 @@ public class Skeleton
 			x = _x;
 			y = _y;
 			z = _z;
-			distToParent = -1.0f;
+			distToParent = 0.0f;
 
 			distToParentMeasurements = new List<float>();
 
@@ -118,7 +118,7 @@ public class Skeleton
 	}
 
 
-	public Skeleton(GameObject _root, List<Transform> joints, List<Material> _debugMats)
+	public Skeleton(GameObject _root, List<Material> _debugMats)
 	{
 		root = _root;
 		if(_debugMats.Count > 2)
@@ -157,18 +157,21 @@ public class Skeleton
 		return ret;
 	}
 
-	void updateDistToParent(jointData _joint, jointData _parent)
+	void updateDistToParent(ref jointData _joint, jointData _parent)
 	{
 		Vector3 jointPos = new Vector3(_joint.x, _joint.y, _joint.z);
 		Vector3 parentPos = new Vector3(_parent.x, _parent.y, _parent.z);
 		float dist = Vector3.Distance(jointPos, parentPos);
-		_joint.distToParent = replaceInAverage(_joint.distToParentMeasurements, _joint.distToParent, dist);
+		if (_joint.distToParentMeasurements.Count == 0) {
+			_joint.distToParent = dist;
+			_joint.distToParentMeasurements.Add (dist);
+		}
+		else
+			_joint.distToParent = replaceInAverage(_joint.distToParentMeasurements, _joint.distToParent, dist);
 	}
 
 	public void updateJoints(String _data)
 	{
-		curr_skeleton_dict.Clear();
-
 		//Split the packet into the component 
 		String[] jointData_str = _data.Split ('/');
 
@@ -187,7 +190,18 @@ public class Skeleton
 
 			int trackState = Int32.Parse (coords [4]);
 
-			curr_skeleton_dict.Add (currJoint, new jointData (x, y, z, trackState, getParentId(currJoint)));
+			jointData jd;
+			//If there is a dictionary entry for the joint, update its position
+			if (curr_skeleton_dict.TryGetValue (currJoint, out jd)) {
+				curr_skeleton_dict.Remove (currJoint);
+				jd.x = x;
+				jd.y = y;
+				jd.z = z;
+				jd.trackState = trackState;
+				curr_skeleton_dict.Add (currJoint, jd);
+			}
+			else
+				curr_skeleton_dict.Add (currJoint, new jointData (x, y, z, trackState, getParentId(currJoint)));
 		}
 
 		//Update the joint positions if known, and colour them accordingly
@@ -195,6 +209,7 @@ public class Skeleton
 		{
 			//an empty joint data that we store our joint in if it exists
 			jointData jd, jd_prev;
+
 
 			//If there is a dictionary entry for the joint, update its position
 			if (curr_skeleton_dict.TryGetValue (i, out jd) && prev_skeleton_dict.TryGetValue (i, out jd_prev)) 
@@ -213,10 +228,12 @@ public class Skeleton
 
 					jointData parentJoint;
 					if (curr_skeleton_dict.TryGetValue (jd.parentID, out parentJoint))
-						updateDistToParent(jd, parentJoint);
+						updateDistToParent(ref jd, parentJoint);
+
+					curr_skeleton_dict.Remove (i);
+					curr_skeleton_dict.Add (i, jd);
 
 					final = kalman[i].Update(final);
-
 				}
 				//If the position is inferred colour it green
 				else if(jd.trackState == 1)
@@ -234,7 +251,6 @@ public class Skeleton
 							Vector3 parentOfParentPos = new Vector3(parentOfParentJoint.x, parentOfParentJoint.y, parentOfParentJoint.z);
 							r.direction =  parentOfParentPos - parentPos;
 							final = r.GetPoint(jd.distToParent);
-							Debug.Log(jd.distToParent);
 						}
 					}
 				}
@@ -250,6 +266,7 @@ public class Skeleton
 			else
 				root.transform.GetChild (i).gameObject.GetComponent<MeshRenderer> ().material = dm_red;
 		}
+			
 
 		prev_skeleton_dict = new Dictionary<int, jointData>(curr_skeleton_dict);
 	}

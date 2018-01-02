@@ -42,3 +42,6 @@
    --- End of inner exception stack trace ---
    at System.Net.Sockets.NetworkStream.EndRead(IAsyncResult asyncResult)
    at MqttLib.Core.StreamManager.listen(IAsyncResult asyncResult)
+#
+# Creating new log
+#
