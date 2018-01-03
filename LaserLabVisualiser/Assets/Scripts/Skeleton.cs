@@ -20,10 +20,8 @@ public class Skeleton
 
 	List<IKalmanWrapper> kalman;
 
-	uint avPrecision = 5;
-
-	Dictionary<int, jointData> prev_skeleton_dict;
-	Dictionary<int, jointData> curr_skeleton_dict;
+	Dictionary<int, JointData> prev_skeleton_dict;
+	Dictionary<int, JointData> curr_skeleton_dict;
 
 	///The types of joints of a Body.
 	public enum JointType
@@ -54,26 +52,7 @@ public class Skeleton
 		HandTipRight  = 23,
 		ThumbRight    = 24
 	}	 
-	public struct jointData
-	{
-		public float x, y, z;
-		public float distToParent;
-		public List<float> distToParentMeasurements;
-		public int trackState;
-		public int parentID;
-		public jointData(float _x, float _y, float _z, int _trackState, int _parentID)
-		{
-			x = _x;
-			y = _y;
-			z = _z;
-			distToParent = 0.0f;
 
-			distToParentMeasurements = new List<float>();
-
-			trackState = _trackState;
-			parentID = _parentID;
-		}
-	}
 	//https://vvvv.org/sites/default/files/images/kinectskeleton-map2.png
 	int getParentId(int _id)
 	{
@@ -117,6 +96,47 @@ public class Skeleton
 		}
 	}
 
+	int getChildId(int _id)
+	{
+		switch(_id)
+		{
+		//Spine and head
+		case((int)JointType.SpineBase): return -1;
+		case((int)JointType.SpineMid): return -1;
+		case((int)JointType.Neck): return (int)JointType.Head;
+		case((int)JointType.Head): return -1;
+			//Left arm
+		case((int)JointType.ShoulderLeft): return (int)JointType.ElbowLeft;
+		case((int)JointType.ElbowLeft): return (int)JointType.WristLeft;
+		case((int)JointType.WristLeft): return (int)JointType.HandLeft;
+		case((int)JointType.HandLeft): return (int)JointType.HandTipLeft;
+			//Right arm
+		case((int)JointType.ShoulderRight): return (int)JointType.ElbowRight;
+		case((int)JointType.ElbowRight): return (int)JointType.WristRight;
+		case((int)JointType.WristRight): return (int)JointType.HandRight;
+		case((int)JointType.HandRight): return (int)JointType.HandTipRight;	
+			//Left leg
+		case((int)JointType.HipLeft): return (int)JointType.KneeLeft;
+		case((int)JointType.KneeLeft): return (int)JointType.AnkleLeft;
+		case((int)JointType.AnkleLeft): return (int)JointType.FootLeft;
+		case((int)JointType.FootLeft): return -1;
+			//Right leg
+		case((int)JointType.HipRight): return (int)JointType.KneeRight;
+		case((int)JointType.KneeRight): return (int)JointType.AnkleRight;
+		case((int)JointType.AnkleRight): return (int)JointType.FootRight;
+		case((int)JointType.FootRight): return -1;
+			//Spine Shoulder length, I dont know why its down here either, but it's the Kinect convention
+		case((int)JointType.SpineShoulder): return -1;
+			//Left hand
+		case((int)JointType.HandTipLeft): return -1;
+		case((int)JointType.ThumbLeft): return -1;
+			//Right hand
+		case((int)JointType.HandTipRight): return -1;
+		case((int)JointType.ThumbRight): return -1;
+		default:
+			return -1;
+		}
+	}
 
 	public Skeleton(GameObject _root, List<Material> _debugMats)
 	{
@@ -127,8 +147,8 @@ public class Skeleton
 			dm_green = _debugMats[1];
 			dm_blue = _debugMats[2];
 		}
-		curr_skeleton_dict = new Dictionary<int, jointData>();
-		prev_skeleton_dict = new Dictionary<int, jointData>();
+		curr_skeleton_dict = new Dictionary<int, JointData>();
+		prev_skeleton_dict = new Dictionary<int, JointData>();
 
 
 		kalman = new List<IKalmanWrapper>();
@@ -144,31 +164,7 @@ public class Skeleton
 		return P;
 	}
 
-	float replaceInAverage(List<float> _averages, float _currAverage, float _newValue)
-	{
-		float ret = _newValue;
-		if(_averages.Count > 0)
-			ret = (_averages.Count * _currAverage - _averages[0] + _newValue) / _averages.Count;
-		
-		_averages.Add(_newValue);
 
-		if(_averages.Count > avPrecision)
-			_averages.RemoveAt(0);
-		return ret;
-	}
-
-	void updateDistToParent(ref jointData _joint, jointData _parent)
-	{
-		Vector3 jointPos = new Vector3(_joint.x, _joint.y, _joint.z);
-		Vector3 parentPos = new Vector3(_parent.x, _parent.y, _parent.z);
-		float dist = Vector3.Distance(jointPos, parentPos);
-		if (_joint.distToParentMeasurements.Count == 0) {
-			_joint.distToParent = dist;
-			_joint.distToParentMeasurements.Add (dist);
-		}
-		else
-			_joint.distToParent = replaceInAverage(_joint.distToParentMeasurements, _joint.distToParent, dist);
-	}
 
 	public void updateJoints(String _data)
 	{
@@ -190,71 +186,96 @@ public class Skeleton
 
 			int trackState = Int32.Parse (coords [4]);
 
-			jointData jd;
+			JointData jd;
 			//If there is a dictionary entry for the joint, update its position
 			if (curr_skeleton_dict.TryGetValue (currJoint, out jd)) {
 				curr_skeleton_dict.Remove (currJoint);
-				jd.x = x;
-				jd.y = y;
-				jd.z = z;
+				jd.pos = new Vector3 (x, y, z);
 				jd.trackState = trackState;
 				curr_skeleton_dict.Add (currJoint, jd);
 			}
 			else
-				curr_skeleton_dict.Add (currJoint, new jointData (x, y, z, trackState, getParentId(currJoint)));
+				curr_skeleton_dict.Add (currJoint, new JointData (x, y, z, trackState, getParentId(currJoint)));
 		}
 
 		//Update the joint positions if known, and colour them accordingly
 		for (int i = 0; i <= 24; i++) 
 		{
 			//an empty joint data that we store our joint in if it exists
-			jointData jd, jd_prev;
-
+			JointData jd;
 
 			//If there is a dictionary entry for the joint, update its position
-			if (curr_skeleton_dict.TryGetValue (i, out jd) && prev_skeleton_dict.TryGetValue (i, out jd_prev)) 
+			if (curr_skeleton_dict.TryGetValue (i, out jd)) 
 			{
-				Vector3 tracked_pos = new Vector3(jd.x, jd.y, jd.z);
+				Vector3 final = jd.pos;
 				//Vector3 prev_pos = new Vector3(jd_prev.x, jd_prev.y, jd_prev.z);
 
-				Vector3 final = tracked_pos;
 
 				//float dist_moved = Vector3.Distance(tracked_pos, prev_pos);
 
 				//If the position is known colour it blue
 				if(jd.trackState == 2)
 				{
+					Vector3 tracked_pos = jd.pos;
+
 					root.transform.GetChild(i).gameObject.GetComponent<MeshRenderer>().material = dm_blue;
 
-					jointData parentJoint;
-					if (curr_skeleton_dict.TryGetValue (jd.parentID, out parentJoint))
-						updateDistToParent(ref jd, parentJoint);
+					//Update our average measurements with newly tracked data
+					JointData parentJoint;
+					if (curr_skeleton_dict.TryGetValue (jd.parentID, out parentJoint)) 
+					{
+						jd.updateDistToParent (parentJoint);
+					}
+					//Update direction based on last child direction if possible
+					JointData childJoint;
+					if (curr_skeleton_dict.TryGetValue (getChildId (i), out childJoint) && curr_skeleton_dict.TryGetValue (jd.parentID, out parentJoint)) 
+					{
+						jd.updateDirChild (childJoint);
+
+						Ray r = new Ray();
+						r.origin = parentJoint.pos;
+						r.direction = jd.dir;
+						final = r.GetPoint(jd.distToParent);
+					} 
+					//Update based on parents, less preferable
+					else if(curr_skeleton_dict.TryGetValue (jd.parentID, out parentJoint)) 
+					{
+						jd.updateDirParent (parentJoint);
+
+						if (Vector3.Distance (tracked_pos, parentJoint.pos) > jd.distToParent * 1.1f) 
+						{
+							Ray r = new Ray();
+							r.origin = parentJoint.pos;
+							r.direction = jd.dir;
+							final = r.GetPoint(jd.distToParent);
+						}
+					}
+
+
 
 					curr_skeleton_dict.Remove (i);
 					curr_skeleton_dict.Add (i, jd);
 
-					final = kalman[i].Update(final);
+					final = kalman[i].Update(tracked_pos);
 				}
+
 				//If the position is inferred colour it green
 				else if(jd.trackState == 1)
 				{
 					root.transform.GetChild(i).gameObject.GetComponent<MeshRenderer>().material = dm_green;
 
-					jointData parentJoint, parentOfParentJoint;
+					JointData parentJoint, parentOfParentJoint;
 					if(curr_skeleton_dict.TryGetValue(jd.parentID, out parentJoint))
 					{
 						if(curr_skeleton_dict.TryGetValue(parentJoint.parentID, out parentOfParentJoint))
 						{
 							Ray r = new Ray();
-							r.origin = new Vector3(parentJoint.x, parentJoint.y, parentJoint.z);
-							Vector3 parentPos = new Vector3(parentJoint.x, parentJoint.y, parentJoint.z);
-							Vector3 parentOfParentPos = new Vector3(parentOfParentJoint.x, parentOfParentJoint.y, parentOfParentJoint.z);
-							r.direction =  parentOfParentPos - parentPos;
+							r.origin = parentJoint.pos;
+							r.direction = jd.dir;
 							final = r.GetPoint(jd.distToParent);
 						}
 					}
 				}
-
 				else
 					root.transform.GetChild (i).gameObject.GetComponent<MeshRenderer> ().material = dm_red;
 
@@ -268,12 +289,12 @@ public class Skeleton
 		}
 			
 
-		prev_skeleton_dict = new Dictionary<int, jointData>(curr_skeleton_dict);
+		prev_skeleton_dict = new Dictionary<int, JointData>(curr_skeleton_dict);
 	}
 
-	public Dictionary<int, jointData> getSkeleDic()
+	public Dictionary<int, JointData> getSkeleDic()
 	{
-		Dictionary<int, jointData> ret = new Dictionary<int, jointData>(curr_skeleton_dict);
+		Dictionary<int, JointData> ret = new Dictionary<int, JointData>(curr_skeleton_dict);
 		return ret;
 	}
 }

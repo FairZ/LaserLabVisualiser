@@ -77,7 +77,7 @@ public class mqttSkeleton : mqttClient
 	{
 		for(int i = 1; i <= 24; i++)
 		{
-			Skeleton.jointData jd;
+			JointData jd;
 			if(activeSkeleton.getSkeleDic().TryGetValue(i, out jd))
 			{
 				activeSkeleton.root.transform.GetChild(i).gameObject.GetComponent<LineRenderer>().SetPosition(0, activeSkeleton.root.transform.GetChild(i).position);
