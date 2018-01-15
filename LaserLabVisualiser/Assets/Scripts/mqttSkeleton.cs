@@ -13,6 +13,7 @@ public class mqttSkeleton : mqttClient
 	String[] localData;
 	int lineCount;
 	private Skeleton activeSkeleton;
+	private cleanSkeleton cleanSkeleton;
 
 	void createBallSkeleton()
 	{
@@ -34,18 +35,52 @@ public class mqttSkeleton : mqttClient
 		for (uint i = 0; i < 24; i++) {
 			GameObject tmpGO = Instantiate (sphere);
 			//Cast to our enum to determine name
-			Skeleton.JointType jt = (Skeleton.JointType)i;
+			JointData.JointType jt = (JointData.JointType)i;
 			tmpGO.name = jt.ToString ();
 			tmpGO.transform.SetParent (parent.transform);
 			joints.Add(tmpGO.transform);
 
 		}
 		//Finally set the template to be the final joint, more efficient
-		Skeleton.JointType _jt = (Skeleton.JointType)24;
+		JointData.JointType _jt = (JointData.JointType)24;
 		sphere.name = _jt.ToString ();
 		sphere.transform.SetParent (parent.transform);
 		//Set the active skeleton to be our parent
 		activeSkeleton = new Skeleton(parent, debugColours);
+	}
+
+	void createCleanSkeleton()
+	{
+		//Create a sphere to use as a template
+		GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
+		sphere.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
+
+		//Add line for drawing a stickman
+		sphere.AddComponent<LineRenderer>();
+		sphere.GetComponent<LineRenderer>().material = debugColours[3];
+		sphere.GetComponent<LineRenderer>().widthMultiplier = 0.2f;
+		sphere.GetComponent<LineRenderer>().receiveShadows = false;
+		//Create a gameobject to attach the joints to
+		GameObject parent = new GameObject("Skeleton");
+
+		List<Transform> joints = new List<Transform>();
+		//24 is length of joint types
+		//Each iteration make a copy of the template sphere and attach it to the parent and name it
+		for (uint i = 0; i < 24; i++) {
+			GameObject tmpGO = Instantiate (sphere);
+			//Cast to our enum to determine name
+			JointData.JointType jt = (JointData.JointType)i;
+			tmpGO.name = jt.ToString ();
+			tmpGO.transform.SetParent (parent.transform);
+			joints.Add(tmpGO.transform);
+
+		}
+		//Finally set the template to be the final joint, more efficient
+		JointData.JointType _jt = (JointData.JointType)24;
+		sphere.name = _jt.ToString ();
+		sphere.transform.SetParent (parent.transform);
+		//Set the active skeleton to be our parent
+		cleanSkeleton = new cleanSkeleton(parent, debugColours);
 	}
 
 	//Imperfect but functional, relatable function really...
@@ -83,13 +118,20 @@ public class mqttSkeleton : mqttClient
 				activeSkeleton.root.transform.GetChild(i).gameObject.GetComponent<LineRenderer>().SetPosition(0, activeSkeleton.root.transform.GetChild(i).position);
 				if(jd.parentID >= 0)
 					activeSkeleton.root.transform.GetChild(i).gameObject.GetComponent<LineRenderer>().SetPosition(1, activeSkeleton.root.transform.GetChild(jd.parentID).position);
-			}
+			}	
+			if(cleanSkeleton.getSkeleDic().TryGetValue(i, out jd))
+			{
+				cleanSkeleton.root.transform.GetChild(i).gameObject.GetComponent<LineRenderer>().SetPosition(0, cleanSkeleton.root.transform.GetChild(i).position);
+				if(jd.parentID >= 0)
+					cleanSkeleton.root.transform.GetChild(i).gameObject.GetComponent<LineRenderer>().SetPosition(1, cleanSkeleton.root.transform.GetChild(jd.parentID).position);
+			}	
 		}
 	}
 
 	void Awake()
 	{
 		createBallSkeleton();
+		createCleanSkeleton ();
 		if (offline)
 			fromFile ();
 	}
@@ -101,6 +143,7 @@ public class mqttSkeleton : mqttClient
 		if(m_data != "")
 		{
 			activeSkeleton.updateJoints(m_data);
+			cleanSkeleton.updateJoints (m_data);
 			updateLinesPos();
 		}
 	}
