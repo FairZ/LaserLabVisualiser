@@ -34,3 +34,51 @@
   --- End of inner exception stack trace ---
   at System.Net.Sockets.NetworkStream.EndRead (IAsyncResult ar) [0x00000] in <filename unknown>:0 
   at MqttLib.Core.StreamManager.listen (IAsyncResult asyncResult) [0x00000] in <filename unknown>:0 
+#
+# Creating new log
+#
+1/17/2018 - 2:43:38 PM - [ERROR]System.IO.IOException: Read failure ---> System.Threading.ThreadAbortException: Thread was being aborted
+  at (wrapper managed-to-native) System.Net.Sockets.Socket:Receive_internal (intptr,byte[],int,int,System.Net.Sockets.SocketFlags,int&)
+  at System.Net.Sockets.Socket.Receive_nochecks (System.Byte[] buf, Int32 offset, Int32 size, SocketFlags flags, System.Net.Sockets.SocketError& error) [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.Socket.Receive (System.Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags) [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.NetworkStream.Read (System.Byte[] buffer, Int32 offset, Int32 size) [0x00000] in <filename unknown>:0 
+  --- End of inner exception stack trace ---
+  at System.Net.Sockets.NetworkStream.Read (System.Byte[] buffer, Int32 offset, Int32 size) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttMessage.ReadCompleteBuffer (System.IO.Stream str, System.Byte[] buffer) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttPublishMessage.ConstructFromStream (System.IO.Stream str) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttMessage..ctor (System.IO.Stream str, Byte header) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttPublishMessage..ctor (System.IO.Stream str, Byte header) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MessageFactory.CreateMessage (System.IO.Stream str, Byte header) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.StreamManager.listen (IAsyncResult asyncResult) [0x00000] in <filename unknown>:0 
+#
+# Creating new log
+#
+1/17/2018 - 2:52:14 PM - [ERROR]System.IO.IOException: Read failure ---> System.Threading.ThreadAbortException: Thread was being aborted
+  at (wrapper managed-to-native) System.Net.Sockets.Socket:Receive_internal (intptr,byte[],int,int,System.Net.Sockets.SocketFlags,int&)
+  at System.Net.Sockets.Socket.Receive_nochecks (System.Byte[] buf, Int32 offset, Int32 size, SocketFlags flags, System.Net.Sockets.SocketError& error) [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.Socket.Receive (System.Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags) [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.NetworkStream.Read (System.Byte[] buffer, Int32 offset, Int32 size) [0x00000] in <filename unknown>:0 
+  --- End of inner exception stack trace ---
+  at System.Net.Sockets.NetworkStream.Read (System.Byte[] buffer, Int32 offset, Int32 size) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttMessage.ReadCompleteBuffer (System.IO.Stream str, System.Byte[] buffer) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttPublishMessage.ConstructFromStream (System.IO.Stream str) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttMessage..ctor (System.IO.Stream str, Byte header) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttPublishMessage..ctor (System.IO.Stream str, Byte header) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MessageFactory.CreateMessage (System.IO.Stream str, Byte header) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.StreamManager.listen (IAsyncResult asyncResult) [0x00000] in <filename unknown>:0 
+#
+# Creating new log
+#
+1/17/2018 - 2:53:42 PM - [ERROR]System.IO.IOException: Read failure ---> System.Threading.ThreadAbortException: Thread was being aborted
+  at (wrapper managed-to-native) System.Net.Sockets.Socket:Receive_internal (intptr,byte[],int,int,System.Net.Sockets.SocketFlags,int&)
+  at System.Net.Sockets.Socket.Receive_nochecks (System.Byte[] buf, Int32 offset, Int32 size, SocketFlags flags, System.Net.Sockets.SocketError& error) [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.Socket.Receive (System.Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags) [0x00000] in <filename unknown>:0 
+  at System.Net.Sockets.NetworkStream.Read (System.Byte[] buffer, Int32 offset, Int32 size) [0x00000] in <filename unknown>:0 
+  --- End of inner exception stack trace ---
+  at System.Net.Sockets.NetworkStream.Read (System.Byte[] buffer, Int32 offset, Int32 size) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttMessage.ReadCompleteBuffer (System.IO.Stream str, System.Byte[] buffer) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttPublishMessage.ConstructFromStream (System.IO.Stream str) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttMessage..ctor (System.IO.Stream str, Byte header) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MqttPublishMessage..ctor (System.IO.Stream str, Byte header) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.Messages.MessageFactory.CreateMessage (System.IO.Stream str, Byte header) [0x00000] in <filename unknown>:0 
+  at MqttLib.Core.StreamManager.listen (IAsyncResult asyncResult) [0x00000] in <filename unknown>:0 

@@ -1,0 +1,9 @@
+C:\Users\ian\Documents\GitHub\LaserLabVisualiser\BodyBasics-WPF\obj\Release\BodyBasics-WPF.csprojResolveAssemblyReference.cache
+C:\Users\ian\Documents\GitHub\LaserLabVisualiser\BodyBasics-WPF\obj\Release\MainWindow.baml
+C:\Users\ian\Documents\GitHub\LaserLabVisualiser\BodyBasics-WPF\obj\Release\MainWindow.g.cs
+C:\Users\ian\Documents\GitHub\LaserLabVisualiser\BodyBasics-WPF\obj\Release\App.g.cs
+C:\Users\ian\Documents\GitHub\LaserLabVisualiser\BodyBasics-WPF\obj\Release\BodyBasics-WPF_MarkupCompile.cache
+C:\Users\ian\Documents\GitHub\LaserLabVisualiser\BodyBasics-WPF\obj\Release\BodyBasics-WPF.g.resources
+C:\Users\ian\Documents\GitHub\LaserLabVisualiser\BodyBasics-WPF\obj\Release\Microsoft.Samples.Kinect.BodyBasics.Properties.Resources.resources
+C:\Users\ian\Documents\GitHub\LaserLabVisualiser\BodyBasics-WPF\obj\Release\BodyBasics-WPF.csproj.GenerateResource.Cache
+C:\Users\ian\Documents\GitHub\LaserLabVisualiser\BodyBasics-WPF\obj\Release\BodyBasics-WPF.csproj.CoreCompileInputs.cache

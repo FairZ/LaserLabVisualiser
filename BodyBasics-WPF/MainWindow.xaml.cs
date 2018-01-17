@@ -428,11 +428,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                             joint.Position.Y.ToString("N3") + ";" +
                             joint.Position.Z.ToString("N3") + ";" +
                             trackState.ToString("D1") + "/";
-
-
-
             }
             payLoad += "*";
+
             m_client.Publish("kinect",
                                 payLoad,
                                 QoS.BestEfforts,
