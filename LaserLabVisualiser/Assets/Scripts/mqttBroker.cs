@@ -12,10 +12,16 @@ public class mqttBroker : MonoBehaviour {
 	//dictionary holding references to all subscribed gameobjects according to which topics they subscribe to
 	private Dictionary<string,List<mqttClient>> m_subscribers = new Dictionary<string, List<mqttClient>>();
 
+	//ip adress to be set in editor
+	public string IPAddress;
+
+	//port to be set in editor
+	public string Port;
+
 	//Awake function connects to the mqtt broker and sets a function to be called whenever a publish arrives
 	//NOTE: a factory class may be used to allow connections to any mqtt broker not just a hard coded one
 	void Awake () {
-		m_client = MqttClientFactory.CreateClient ("tcp://192.168.0.50:1883", "UnityProxy");
+		m_client = MqttClientFactory.CreateClient ("tcp://" + IPAddress + ":" + Port, "UnityProxy");
 		m_client.Connect(true);
 		m_client.PublishArrived += new PublishArrivedDelegate(MessageRecieved);
 	}
